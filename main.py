@@ -2,12 +2,15 @@
 
 import discord
 from discord.ext import commands
+from asyncio import sleep as aiosleep
 
 with open("tokenfile","r") as tokenfile:
 	token = tokenfile.read()
 
 client = commands.Bot(command_prefix="ui!")
 client.remove_command("help")
+
+repo_embed = discord.Embed(title="Repo",description="https://github.com/Vresod/user-imitator")
 
 @client.event
 async def on_ready():
@@ -22,16 +25,23 @@ async def on_guild_join(guild):
 
 @client.command()
 async def help(ctx):
-	await ctx.send("use `ui!imitate <user> <*text>` to imitate a user")
+	await ctx.send(embed=repo_embed)
+
+@client.command()
+async def repo(ctx):
+	await ctx.send(embed=repo_embed)
 
 @client.command()
 async def imitate(ctx,person,*text):
 	msg = " ".join(text)
 	imitated = ctx.message.mentions[0]
 	avatar = await imitated.avatar_url_as(format="png").read()
-	await ctx.send(f"imitating {ctx.message.mentions[0].name}: {msg}")
+	confirm_message = await ctx.send(f"imitating {ctx.message.mentions[0].name}: {msg}")
 	hook = await ctx.channel.create_webhook(name=imitated.name,avatar=avatar)
+	await ctx.message.add_reaction(u"\U00002705")
 	await hook.send(f"{msg}")
 	await hook.delete()
+	await aiosleep(3)
+	await confirm_message.delete()
 
 client.run(token)
