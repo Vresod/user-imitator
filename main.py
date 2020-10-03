@@ -37,7 +37,7 @@ async def imitate(ctx,person,*text):
 	imitated = ctx.message.mentions[0]
 	avatar = await imitated.avatar_url_as(format="png").read()
 	confirm_message = await ctx.send(f"imitating {ctx.message.mentions[0].name}: {msg}")
-	hook = await ctx.channel.create_webhook(name=imitated.name,avatar=avatar)
+	hook = await ctx.channel.create_webhook(name=imitated.display_name,avatar=avatar)
 	await ctx.message.add_reaction(u"\U00002705")
 	await hook.send(f"{msg}")
 	await hook.delete()
